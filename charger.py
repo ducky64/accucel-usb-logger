@@ -12,10 +12,12 @@ class Charger():
   INTERFACE = 0
   ENDPOINT = 1
 
-  TIMEOUT_MS = 1000
+  TIMEOUT_MS = 250
 
-  def __init__(self, deviceNum: Optional[int]=None):
+  def __init__(self, deviceNum: Optional[int]=None, verbose=False):
     # Opens the device USB interface
+    self.verbose = verbose
+
     context = usb1.USBContext()
     devices = context.getDeviceList(skip_on_access_error=False, skip_on_error=False)
     devices = list(filter(lambda device:
@@ -48,5 +50,20 @@ class Charger():
     return decoder.decode_charge_info(self._send_command(charger_enum.Command.GET_CHARGE_INFO))
 
   def _send_command(self, command: charger_enum.Command) -> bytes:
-    self.handle.interruptWrite(self.ENDPOINT, charger_enum.Command.to_packet(command), self.TIMEOUT_MS)
-    return bytes(self.handle.interruptRead(self.ENDPOINT, 64))
+    packet = charger_enum.Command.to_packet(command)
+    if self.verbose:
+      print("Charger command %s: %s" % (command, packet.hex()))
+
+    done = False
+    while not done:
+      try:
+        self.handle.interruptWrite(self.ENDPOINT, packet, self.TIMEOUT_MS)
+        done = True
+      except usb1.USBErrorTimeout:
+        pass
+
+    result = bytes(self.handle.interruptRead(self.ENDPOINT, 64))
+    if self.verbose:
+      print("  Result: %s" % result.hex())
+
+    return result

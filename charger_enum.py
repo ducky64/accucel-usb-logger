@@ -53,6 +53,14 @@ class State(IntEnum):
   COMPLETE = 0x03
   ERROR_2 = 0x04
 
+  def to_abbrev(self):
+    return {
+        self.CHARGING: 'CHG',
+        self.ERROR_1: 'ER1',
+        self.COMPLETE: 'FIN',
+        self.ERROR_2: 'ER2',
+      }[self]
+
 class Error(IntEnum):
   CONNECTION_BROKEN_1 = 0x000b
   CELL_VOLTAGE_INVALID = 0x000c
