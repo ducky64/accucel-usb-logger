@@ -18,8 +18,9 @@ class Charger():
     # Opens the device USB interface
     context = usb1.USBContext()
     devices = context.getDeviceList(skip_on_access_error=False, skip_on_error=False)
-    devices = devices.filter(lambda device:
-        device.getVendorID() == self.USB_VID and device.GetProductId() == self.USB_PID)
+    devices = list(filter(lambda device:
+        device.getVendorID() == self.USB_VID and device.getProductID() == self.USB_PID,
+        devices))
     if deviceNum is not None:
       devices = devices[deviceNum:deviceNum+1]
     if len(devices) != 1:
@@ -42,6 +43,9 @@ class Charger():
 
   def get_sys_info(self):
     return decoder.decode_sys_info(self._send_command(charger_enum.Command.GET_SYS_INFO))
+
+  def get_charge_info(self):
+    return decoder.decode_charge_info(self._send_command(charger_enum.Command.GET_CHARGE_INFO))
 
   def _send_command(self, command: charger_enum.Command) -> bytes:
     self.handle.interruptWrite(self.ENDPOINT, charger_enum.Command.to_packet(command), self.TIMEOUT_MS)

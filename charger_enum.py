@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from enum import IntEnum
 
 
@@ -16,7 +14,8 @@ class Command(IntEnum):
     return bytes([sum(packet[2:]) % 256])
 
   @classmethod
-  def to_packet(cls, command: Command):
+  def to_packet(cls, command: 'Command'):
+    # Ideally we'd use from __future__ import annotations, but Raspbian is still on Python 3.5.3 =(
     packet = bytes([0x0f, 0x03, command, 0x00])
     packet = packet + cls._calculate_checksum(packet) + bytes([0xff, 0xff])
     return packet

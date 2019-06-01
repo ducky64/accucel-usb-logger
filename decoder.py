@@ -1,4 +1,5 @@
 from typing import *
+import charger_enum
 
 
 class DecodeException(RuntimeError):
@@ -10,16 +11,18 @@ def decodeAssertEqual(got: Any, expected: Any, msg: str) -> None:
 
 
 # We use NamedTuple because it provides immutability and a default useful to-string method
-class SysInfo(NamedTuple):
-  resttime_min: int  # minutes
-  safety_timer_min: Optional[int]  # minutes
-  capacity_cutout_mah: Optional[int]  # mAh
-  keybeep: bool
-  buzzer: bool
-  input_cutoff_mv: int  # low-input-voltage cutoff, mV
-  protection_temp_c: int  # degrees C
-  battery_voltage_mv: int  # mV
-  cell_voltages_mv: List[int]  # mV
+# Ideally we'd use the class-based syntax instead of this dumpster fire, but Raspbian is still on Python 3.5.3 =(
+SysInfo = NamedTuple('SysInfo', [
+  ('resttime_min', int),  # minutes
+  ('safety_timer_min', Optional[int]),  # minutes
+  ('capacity_cutout_mah', Optional[int]),  # mAh
+  ('keybeep', bool),
+  ('buzzer', bool),
+  ('input_cutoff_mv', int),  # low-input-voltage cutoff, mV
+  ('protection_temp_c', int),  # degrees C
+  ('battery_voltage_mv', int),  # mV
+  ('cell_voltages_mv', List[int]),  # mV
+])
 
 def decode_sys_info(data: bytes) -> SysInfo:
   decodeAssertEqual(data[0], 0x0f, "Incorrect header")
@@ -43,5 +46,41 @@ def decode_sys_info(data: bytes) -> SysInfo:
       int.from_bytes(data[26:28], 'big'),
       int.from_bytes(data[28:30], 'big'),
       int.from_bytes(data[30:32], 'big'),
+    ]
+  )
+
+ChargeInfo = NamedTuple('ChargeInfo', [
+  ('state', 'charger_enum.State'),
+  ('capacity_mah', int),
+  ('time_s', int),
+  ('voltage_mv', int),
+  ('current_ma', int),
+  ('temp_external_c', int),
+  ('temp_internal_c', int),
+  ('impedance_mohm', int),
+  ('cell_voltages_mv', List[int]),  # mV
+])
+
+def decode_charge_info(data: bytes) -> ChargeInfo:
+  decodeAssertEqual(data[0], 0x0f, "Incorrect header")
+  decodeAssertEqual(data[1], 34, "Incorrect packet length")
+  decodeAssertEqual(data[2], 0x55, "Incorrect transaction type")
+
+  return ChargeInfo(
+    charger_enum.State(data[4]),
+    int.from_bytes(data[5:7], 'big'),
+    int.from_bytes(data[7:9], 'big'),
+    int.from_bytes(data[9:11], 'big'),
+    int.from_bytes(data[11:13], 'big'),
+    data[13],
+    data[14],
+    int.from_bytes(data[15:17], 'big'),
+    cell_voltages_mv = [
+      int.from_bytes(data[17:19], 'big'),
+      int.from_bytes(data[19:21], 'big'),
+      int.from_bytes(data[21:23], 'big'),
+      int.from_bytes(data[23:25], 'big'),
+      int.from_bytes(data[25:27], 'big'),
+      int.from_bytes(data[27:29], 'big'),
     ]
   )
