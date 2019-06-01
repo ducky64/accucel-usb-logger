@@ -43,7 +43,7 @@ class TestDecode(unittest.TestCase):
     self.assertEqual(decoded.current_ma, 0)
     self.assertEqual(decoded.temp_external_c, 0)
     self.assertEqual(decoded.temp_internal_c, 23)
-    self.assertEqual(decoded.impedance_mohm, 0)
+    self.assertEqual(decoded.impedance, 0)
     self.assertEqual(decoded.cell_voltages_mv, [
       297, 293, 315, 310, 321, 321
     ])
@@ -57,7 +57,7 @@ class TestDecode(unittest.TestCase):
     self.assertEqual(decoded.current_ma, 1589)
     self.assertEqual(decoded.temp_external_c, 0)
     self.assertEqual(decoded.temp_internal_c, 23)
-    self.assertEqual(decoded.impedance_mohm, 0)
+    self.assertEqual(decoded.impedance, 0)
     self.assertEqual(decoded.cell_voltages_mv, [
       297, 293, 315, 310, 321, 321
     ])

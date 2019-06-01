@@ -12,7 +12,7 @@ class Charger():
   INTERFACE = 0
   ENDPOINT = 1
 
-  TIMEOUT_MS = 250
+  TIMEOUT_MS = 50
 
   def __init__(self, deviceNum: Optional[int]=None, verbose=False):
     # Opens the device USB interface
@@ -60,7 +60,7 @@ class Charger():
         self.handle.interruptWrite(self.ENDPOINT, packet, self.TIMEOUT_MS)
         done = True
       except usb1.USBErrorTimeout:
-        pass
+        print("USB timed out, retrying")
 
     result = bytes(self.handle.interruptRead(self.ENDPOINT, 64))
     if self.verbose:

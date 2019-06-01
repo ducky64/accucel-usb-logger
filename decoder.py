@@ -57,7 +57,7 @@ ChargeInfo = NamedTuple('ChargeInfo', [
   ('current_ma', int),
   ('temp_external_c', int),
   ('temp_internal_c', int),
-  ('impedance_mohm', int),
+  ('impedance', int),
   ('cell_voltages_mv', List[int]),  # mV
 ])
 
@@ -67,14 +67,14 @@ def decode_charge_info(data: bytes) -> ChargeInfo:
   decodeAssertEqual(data[2], 0x55, "Incorrect transaction type")
 
   return ChargeInfo(
-    charger_enum.State(data[4]),
-    int.from_bytes(data[5:7], 'big'),
-    int.from_bytes(data[7:9], 'big'),
-    int.from_bytes(data[9:11], 'big'),
-    int.from_bytes(data[11:13], 'big'),
-    data[13],
-    data[14],
-    int.from_bytes(data[15:17], 'big'),
+    state = charger_enum.State(data[4]),
+    capacity_mah = int.from_bytes(data[5:7], 'big'),
+    time_s = int.from_bytes(data[7:9], 'big'),
+    voltage_mv = int.from_bytes(data[9:11], 'big'),
+    current_ma = int.from_bytes(data[11:13], 'big'),
+    temp_external_c = data[13],
+    temp_internal_c = data[14],
+    impedance = int.from_bytes(data[15:17], 'big'),
     cell_voltages_mv = [
       int.from_bytes(data[17:19], 'big'),
       int.from_bytes(data[19:21], 'big'),
