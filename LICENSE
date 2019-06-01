@@ -1,6 +1,12 @@
+Most of this repository is licensed under the BSD 3-Clause license (below), EXCEPT charger_enum.py.
+Its license is unclear: it is a transliteration of https://github.com/maciek134/libb6/blob/4e330d50963a8eb95dc88e156dcc85d40cfee91c/Enum.hh, which is a GPL-3.0 project.
+If charger_enum.py is considered a derivative work (this is the safer option), then it must also be licensed under GPL-3.0.
+Otherwise, it is BSD 3-clause, as below.
+
+
 BSD 3-Clause License
 
-Copyright (c) 2019, Richard Lin
+Copyright (c) 2019, Ducky
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
