@@ -1,12 +1,11 @@
-from typing import *
 import unittest
 
-from decoder import decodeSysInfo
+from decoder import decode_sys_info
 
 class TestDecode(unittest.TestCase):
   def test_decode(self):
     reply = bytes.fromhex('0f255a000a010168011f40000127100000500cc801290125013c013601410142000000000000d3ffff0000000000000000000000000000000000000000000000')
-    decoded = decodeSysInfo(reply)
+    decoded = decode_sys_info(reply)
     self.assertEqual(decoded.resttime_min, 10)
     self.assertEqual(decoded.safety_timer_min, 360)
     self.assertEqual(decoded.capacity_cutout_mah, 8000)
@@ -21,7 +20,7 @@ class TestDecode(unittest.TestCase):
 
     # Testvector from chargemaster-protocol analyzeReply_testbench
     reply = bytes.fromhex('0f255a00000100b4011f4001012af80000502e04100a100e100f017d0150014800000000000084ffff0000000000000000000000000000000000000000000000')
-    decoded = decodeSysInfo(reply)
+    decoded = decode_sys_info(reply)
     self.assertEqual(decoded.resttime_min, 0)
     self.assertEqual(decoded.safety_timer_min, 180)
     self.assertEqual(decoded.capacity_cutout_mah, 8000)

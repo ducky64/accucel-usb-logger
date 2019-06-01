@@ -1,33 +1,45 @@
-from enum import Enum
+from __future__ import annotations
+
+from enum import IntEnum
 
 
 # Constants from https://github.com/maciek134/libb6/blob/4e330d50963a8eb95dc88e156dcc85d40cfee91c/Enum.hh
 
-class Command(Enum):
+class Command(IntEnum):
   GET_DEV_INFO = 0x57
   GET_SYS_INFO = 0x5a
   GET_CHARGE_INFO = 0x55
   STOP_CHARGING = 0xfe
 
-class ChargingModeLi(Enum):
+  @classmethod
+  def _calculate_checksum(cls, packet: bytes):
+    return bytes([sum(packet[2:]) % 256])
+
+  @classmethod
+  def to_packet(cls, command: Command):
+    packet = bytes([0x0f, 0x03, command, 0x00])
+    packet = packet + cls._calculate_checksum(packet) + bytes([0xff, 0xff])
+    return packet
+
+class ChargingModeLi(IntEnum):
   STANDARD = 0x00
   DISCHARGE = 0x01
   STORAGE = 0x02
   FAST = 0x03
   BALANCE = 0x04
 
-class ChargingModeNi(Enum):
+class ChargingModeNi(IntEnum):
   STANDARD = 0x00
   AUTO = 0x01
   DISCHARGE = 0x02
   REPEAK = 0x03
   CYCLE = 0x04
 
-class ChargingModePb(Enum):
+class ChargingModePb(IntEnum):
   CHARGE = 0x00
   DISCHARGE = 0x01
 
-class BatteryType(Enum):
+class BatteryType(IntEnum):
   LIPO = 0x00
   LIIO = 0x01
   LIFE = 0x02
@@ -36,13 +48,13 @@ class BatteryType(Enum):
   NICD = 0x05
   PB = 0x06
 
-class State(Enum):
+class State(IntEnum):
   CHARGING = 0x01
   ERROR_1 = 0x02
   COMPLETE = 0x03
   ERROR_2 = 0x04
 
-class Error(Enum):
+class Error(IntEnum):
   CONNECTION_BROKEN_1 = 0x000b
   CELL_VOLTAGE_INVALID = 0x000c
   BALANCE_CONNECTION = 0x000d

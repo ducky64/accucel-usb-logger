@@ -21,7 +21,7 @@ class SysInfo(NamedTuple):
   battery_voltage_mv: int  # mV
   cell_voltages_mv: List[int]  # mV
 
-def decodeSysInfo(data: bytes) -> SysInfo:
+def decode_sys_info(data: bytes) -> SysInfo:
   decodeAssertEqual(data[0], 0x0f, "Incorrect header")
   decodeAssertEqual(data[1], 37, "Incorrect packet length")
   decodeAssertEqual(data[2], 0x5a, "Incorrect transaction type")
