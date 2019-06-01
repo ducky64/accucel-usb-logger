@@ -18,7 +18,6 @@ class TestDecode(unittest.TestCase):
     self.assertEqual(decoded.cell_voltages_mv, [
       297, 293, 316, 310, 321, 322
     ])
-    print(decoded)
 
     # Testvector from chargemaster-protocol analyzeReply_testbench
     reply = bytes.fromhex('0f255a00000100b4011f4001012af80000502e04100a100e100f017d0150014800000000000084ffff0000000000000000000000000000000000000000000000')
@@ -34,4 +33,3 @@ class TestDecode(unittest.TestCase):
     self.assertEqual(decoded.cell_voltages_mv, [
       4106, 4110, 4111, 381, 336, 328
     ])
-    print(decoded)
